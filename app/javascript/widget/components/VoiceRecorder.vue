@@ -79,7 +79,7 @@ export default {
     async uploadRecording(audioBlob) {
       this.isUploading = true;
       try {
-        const file = new File([audioBlob], 'voice-message.mp3', {
+        const file = new File([audioBlob], 'voice-' + Date.now() + '.mp3', {
           type: 'audio/mp3',
         });
 
@@ -122,21 +122,45 @@ export default {
             message: error,
           });
         } else {
-          this.onAttach({
-            file: blob.signed_id,
-            thumbUrl: window.URL.createObjectURL(file),
-            fileType: 'file',
-          });
+          setTimeout(() => {
+            this.onAttach({
+              file: blob.signed_id,
+              ...this.getLocalFileAttributes(file),
+            });
+          }, 500);
         }
       });
     },
 
     async onIndirectFileUpload(file) {
-      await this.onAttach({
-        file: file,
-        thumbUrl: window.URL.createObjectURL(file),
-        fileType: 'file',
-      });
+      if (!file) {
+        return;
+      }
+      this.isUploading = true;
+
+      if (checkFileSizeLimit(file, MAXIMUM_FILE_UPLOAD_SIZE)) {
+        setTimeout(() => {
+          this.onAttach({
+            file: file,
+            thumbUrl: window.URL.createObjectURL(file),
+            fileType: file.type,
+          });
+        }, 500);
+      } else {
+        emitter.emit(BUS_EVENTS.SHOW_ALERT, {
+          message: this.$t('FILE_SIZE_LIMIT', {
+            MAXIMUM_FILE_UPLOAD_SIZE: this.fileUploadSizeLimit,
+          }),
+        });
+      }
+
+      this.isUploading = false;
+    },
+    getLocalFileAttributes(file) {
+      return {
+        thumbUrl: window.URL.createObjectURL(file.file),
+        fileType: this.getFileType(file.type),
+      };
     },
   },
 };
