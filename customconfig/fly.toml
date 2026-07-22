@@ -1,0 +1,46 @@
+app = "chatwoot-beehive"
+primary_region = "sin"
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+
+# dockerfile = "DockerfileCache"
+# image = "chatwoot/chatwoot:latest"
+[build]
+  dockerfile = "DockerfileCache"
+
+[env]
+  PORT = "3000"
+  ACTIVE_STORAGE_SERVICE="amazon"
+  S3_FORCE_PATH_STYLE="true"
+  STORAGE_BUCKET_NAME="chatwoot-insidebeehive"
+  STORAGE_FORCE_PATH_STYLE="true"
+  AWS_REGION=ap-southeast-1
+  INSTALLATION_ENV="self_hosted"
+  CHATWOOT_INSTALLATION_TYPE="self_hosted"
+  FRONTEND_URL="https://chatwoot-beehive.fly.dev"
+  ENABLE_RACK_ATTACK = true
+
+# ENABLE_ACCOUNT_SIGNUP=true
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[statics]]
+  guest_path = "/app/public"
+  url_prefix = "/public"
+
+[processes]
+  app = "bundle exec rails server -b 0.0.0.0"
+  sidekiq = "bundle exec sidekiq -C config/sidekiq.yml"
+
+[deploy]
+release_command="/bin/sh customconfig/post-deploy.sh"
+
+# [mounts]
+# source = "chatwoot_beehive_data"
+# destination = "/data"
