@@ -113,7 +113,12 @@ export const actions = {
         message: data,
         tempId: tempMessage.id,
       });
-      commit('pushMessageToConversation', { ...data, status: 'sent' });
+      setTimeout(
+        () => {
+          commit('pushMessageToConversation', { ...data, status: 'sent' });
+        },
+        attachment.file_type === 'audio' ? 500 : 0
+      );
     } catch (error) {
       commit('pushMessageToConversation', { ...tempMessage, status: 'failed' });
       commit('updateMessageMeta', {

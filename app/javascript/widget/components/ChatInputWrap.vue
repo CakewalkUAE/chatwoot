@@ -4,6 +4,7 @@ import { mapGetters } from 'vuex';
 
 import ChatAttachmentButton from 'widget/components/ChatAttachment.vue';
 import ChatSendButton from 'widget/components/ChatSendButton.vue';
+import VoiceRecorder from 'widget/components/VoiceRecorder.vue';
 import { useAttachments } from '../composables/useAttachments';
 import FluentIcon from 'shared/components/FluentIcon/Index.vue';
 import ResizableTextArea from 'shared/components/ResizableTextArea.vue';
@@ -20,6 +21,7 @@ export default {
     EmojiPicker,
     FluentIcon,
     ResizableTextArea,
+    VoiceRecorder,
   },
   props: {
     onSendMessage: {
@@ -36,11 +38,13 @@ export default {
       canHandleAttachments,
       shouldShowEmojiPicker,
       hasEmojiPickerEnabled,
+      hasVoiceNoteEnabled,
     } = useAttachments();
     return {
       canHandleAttachments,
       shouldShowEmojiPicker,
       hasEmojiPickerEnabled,
+      hasVoiceNoteEnabled,
     };
   },
   data() {
@@ -59,6 +63,9 @@ export default {
     }),
     showAttachment() {
       return this.canHandleAttachments && this.userInput.length === 0;
+    },
+    showVoiceNote() {
+      return this.hasVoiceNoteEnabled && this.userInput.length === 0;
     },
     showSendButton() {
       return this.userInput.length > 0;
@@ -181,6 +188,11 @@ export default {
         class="!bottom-full end-0 mb-2 max-w-[calc(100vw-3rem)]"
         @select="onSelectEmoji"
         @keydown.esc="hideEmojiPicker"
+      />
+      <VoiceRecorder
+        v-if="showVoiceNote"
+        class="text-n-slate-12"
+        :on-attach="onSendAttachment"
       />
       <ChatSendButton
         v-if="showSendButton"

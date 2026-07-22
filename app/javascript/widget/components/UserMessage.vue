@@ -5,6 +5,7 @@ import ImageBubble from 'widget/components/ImageBubble.vue';
 import VideoBubble from 'widget/components/VideoBubble.vue';
 import FluentIcon from 'shared/components/FluentIcon/Index.vue';
 import FileBubble from 'widget/components/FileBubble.vue';
+import AudioBubble from 'widget/components/AudioBubble.vue';
 import { messageStamp } from 'shared/helpers/timeHelper';
 import messageMixin from '../mixins/messageMixin';
 import ReplyToChip from 'widget/components/ReplyToChip.vue';
@@ -21,6 +22,7 @@ export default {
     ImageBubble,
     VideoBubble,
     FileBubble,
+    AudioBubble,
     FluentIcon,
     ReplyToChip,
     DragWrapper,
@@ -150,9 +152,12 @@ export default {
                   :readable-time="readableTime"
                   @error="onVideoLoadError"
                 />
-
+                <AudioBubble
+                  v-if="attachment.file_type === 'audio'"
+                  :url="attachment.data_url"
+                />
                 <FileBubble
-                  v-else
+                  v-else-if="attachment.file_type !== 'audio'"
                   :url="attachment.data_url"
                   :is-in-progress="isInProgress"
                   :widget-color="widgetColor"
