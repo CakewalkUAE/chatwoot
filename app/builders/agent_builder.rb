@@ -47,10 +47,9 @@ class AgentBuilder
     @new_user = false
     user = User.from_email(email)
     return user if user
-
     @name = email.split('@').first if @name.blank?
-    temp_password = "1!aA#{SecureRandom.alphanumeric(12)}"
-    User.new(email: email, name: @name, password: temp_password, password_confirmation: temp_password).tap do |new_user|
+    temp_password = 'Cw@1234567890'
+    User.new(email: email, name: @name, password: temp_password, password_confirmation: temp_password, confirmed_at: Time.current).tap do |new_user|
       new_user.skip_confirmation_notification!
       new_user.save!
       @new_user = true

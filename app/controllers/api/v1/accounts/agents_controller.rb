@@ -16,7 +16,6 @@ class Api::V1::Accounts::AgentsController < Api::V1::Accounts::BaseController
       inviter: current_user,
       account: Current.account
     )
-
     @agent = builder.perform
   rescue AgentBuilder::LimitExceededError => e
     render_payment_required(e.message)

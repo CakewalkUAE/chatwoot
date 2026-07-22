@@ -11,6 +11,15 @@ class V2::Reports::AgentSummaryBuilder < V2::Reports::BaseSummaryBuilder
   attr_reader :conversations_count, :resolved_count,
               :avg_resolution_time, :avg_first_response_time, :avg_reply_time
 
+  def fetch_conversations_count
+    # Count conversations where the agent actually responded (sent the first reply),
+    # not just who was assigned — avoids crediting offline agents who never attended.
+    account.reporting_events
+           .where(name: 'first_response', created_at: range)
+           .group(:user_id)
+           .count
+  end
+
   def prepare_report
     account.account_users.map do |account_user|
       build_agent_stats(account_user)
