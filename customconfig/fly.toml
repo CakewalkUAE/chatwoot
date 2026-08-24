@@ -15,11 +15,11 @@ kill_timeout = 5
   S3_FORCE_PATH_STYLE="true"
   STORAGE_BUCKET_NAME="chatwoot-insidebeehive"
   STORAGE_FORCE_PATH_STYLE="true"
-  AWS_REGION=ap-southeast-1
+  AWS_REGION="ap-southeast-1"
   INSTALLATION_ENV="self_hosted"
   CHATWOOT_INSTALLATION_TYPE="self_hosted"
   FRONTEND_URL="https://chatwoot-beehive.fly.dev"
-  ENABLE_RACK_ATTACK = true
+  ENABLE_RACK_ATTACK = "true"
 
 # ENABLE_ACCOUNT_SIGNUP=true
 [http_service]
@@ -37,6 +37,11 @@ kill_timeout = 5
 [processes]
   app = "bundle exec rails server -b 0.0.0.0"
   sidekiq = "bundle exec sidekiq -C config/sidekiq.yml"
+
+[[vm]]
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 1
 
 [deploy]
 release_command="/bin/sh customconfig/post-deploy.sh"
