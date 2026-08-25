@@ -20,6 +20,8 @@ kill_timeout = 5
   CHATWOOT_INSTALLATION_TYPE="self_hosted"
   FRONTEND_URL="https://chatwoot-beehive.fly.dev"
   ENABLE_RACK_ATTACK = "true"
+  WEB_CONCURRENCY = "2"
+  RAILS_MAX_THREADS = "5"
 
 # ENABLE_ACCOUNT_SIGNUP=true
 [http_service]
@@ -39,9 +41,12 @@ kill_timeout = 5
   sidekiq = "bundle exec sidekiq -C config/sidekiq.yml"
 
 [[vm]]
-  memory = "2gb"
-  cpu_kind = "performance"
-  cpus = 1
+  size = "performance-2x"
+  processes = ["app"]
+
+[[vm]]
+  size = "performance-1x"
+  processes = ["sidekiq"]
 
 [deploy]
 release_command="/bin/sh customconfig/post-deploy.sh"
