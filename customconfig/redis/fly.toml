@@ -1,0 +1,21 @@
+app = "chatwoot-redis-self"
+primary_region = "sin"
+
+# Dedicated single-node Redis for Chatwoot (chatwoot-beehive).
+# noeviction + AOF persistence so Sidekiq never silently drops queued jobs.
+# Internal-only: reachable from chatwoot-beehive at chatwoot-redis-self.internal:6379
+
+[build]
+  image = "redis:7.4-alpine"
+
+[[mounts]]
+  source = "chatwoot_redis_data"
+  destination = "/data"
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1
+
+[processes]
+  app = "sh -c 'exec redis-server --appendonly yes --maxmemory-policy noeviction --maxmemory 400mb --dir /data --requirepass \"$REDIS_PASSWORD\"'"
